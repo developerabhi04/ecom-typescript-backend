@@ -12,75 +12,75 @@ import ErrorHandler from "../utils/utility-class.js";
 
 
 
-// export const createPaymentIntent = TryCatch(async (req, res, next) => {
-//     const { id } = req.query;
+export const createPaymentIntent = TryCatch(async (req, res, next) => {
+    const { id } = req.query;
 
-//     const user = await User.findById(id).select("name");
+    const user = await User.findById(id).select("name");
 
-//     if (!user) return next(new ErrorHandler("Please login first", 401));
+    if (!user) return next(new ErrorHandler("Please login first", 401));
 
-//     const {
-//         items,
-//         shippingInfo,
-//         coupon,
-//     }: {
-//         items: OrderItemType[];
-//         shippingInfo: ShippingInfoType | undefined;
-//         coupon: string | undefined;
-//     } = req.body;
+    const {
+        items,
+        shippingInfo,
+        coupon,
+    }: {
+        items: OrderItemType[];
+        shippingInfo: ShippingInfoType | undefined;
+        coupon: string | undefined;
+    } = req.body;
 
-//     if (!items) return next(new ErrorHandler("Please send items", 400));
+    if (!items) return next(new ErrorHandler("Please send items", 400));
 
-//     if (!shippingInfo)
-//         return next(new ErrorHandler("Please send shipping info", 400));
+    if (!shippingInfo)
+        return next(new ErrorHandler("Please send shipping info", 400));
 
-//     let discountAmount = 0;
+    let discountAmount = 0;
 
-//     if (coupon) {
-//         const discount = await Coupon.findOne({ code: coupon });
-//         if (!discount) return next(new ErrorHandler("Invalid Coupon Code", 400));
-//         discountAmount = discount.amount;
-//     }
+    if (coupon) {
+        const discount = await Coupon.findOne({ code: coupon });
+        if (!discount) return next(new ErrorHandler("Invalid Coupon Code", 400));
+        discountAmount = discount.amount;
+    }
 
-//     const productIDs = items.map((item) => item.productId);
+    const productIDs = items.map((item) => item.productId);
 
-//     const products = await Product.find({
-//         _id: { $in: productIDs },
-//     });
+    const products = await Product.find({
+        _id: { $in: productIDs },
+    });
 
-//     const subtotal = products.reduce((prev, curr) => {
-//         const item = items.find((i) => i.productId === curr._id.toString());
-//         if (!item) return prev;
-//         return curr.price * item.quantity + prev;
-//     }, 0);
+    const subtotal = products.reduce((prev, curr) => {
+        const item = items.find((i) => i.productId === curr._id.toString());
+        if (!item) return prev;
+        return curr.price * item.quantity + prev;
+    }, 0);
 
-//     const tax = subtotal * 0.18;
+    const tax = subtotal * 0.18;
 
-//     const shipping = subtotal > 1000 ? 0 : 200;
+    const shipping = subtotal > 1000 ? 0 : 200;
 
-//     const total = Math.floor(subtotal + tax + shipping - discountAmount);
+    const total = Math.floor(subtotal + tax + shipping - discountAmount);
 
-//     const paymentIntent = await stripe.paymentIntents.create({
-//         amount: total * 100,
-//         currency: "inr",
-//         description: "MERN-Ecommerce",
-//         shipping: {
-//             name: user.name,
-//             address: {
-//                 line1: shippingInfo.address,
-//                 postal_code: shippingInfo.pinCode.toString(),
-//                 city: shippingInfo.city,
-//                 state: shippingInfo.state,
-//                 country: shippingInfo.country,
-//             },
-//         },
-//     });
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: total * 100,
+        currency: "inr",
+        description: "MERN-Ecommerce",
+        shipping: {
+            name: user.name,
+            address: {
+                line1: shippingInfo.address,
+                postal_code: shippingInfo.pinCode.toString(),
+                city: shippingInfo.city,
+                state: shippingInfo.state,
+                country: shippingInfo.country,
+            },
+        },
+    });
 
-//     return res.status(201).json({
-//         success: true,
-//         clientSecret: paymentIntent.client_secret,
-//     });
-// });
+    return res.status(201).json({
+        success: true,
+        clientSecret: paymentIntent.client_secret,
+    });
+});
 
 
 
@@ -90,21 +90,21 @@ import ErrorHandler from "../utils/utility-class.js";
 // Add-New Coupon
 
 
-export const createPaymentIntent = TryCatch(async (req, res, next) => {
-    const { amount } = req.body;
+// export const createPaymentIntent = TryCatch(async (req, res, next) => {
+//     const { amount } = req.body;
 
-    if (!amount) return next(new ErrorHandler("Please Enter amount", 401));
+//     if (!amount) return next(new ErrorHandler("Please Enter amount", 401));
 
-    const paymentIntent = await stripe.paymentIntents.create({
-        amount: Number(amount) * 100,
-        currency: "inr",
-    });
+//     const paymentIntent = await stripe.paymentIntents.create({
+//         amount: Number(amount) * 100,
+//         currency: "inr",
+//     });
 
-    return res.status(201).json({
-        success: true,
-        clientSecret: paymentIntent.client_secret,
-    });
-});
+//     return res.status(201).json({
+//         success: true,
+//         clientSecret: paymentIntent.client_secret,
+//     });
+// });
 
 
 
